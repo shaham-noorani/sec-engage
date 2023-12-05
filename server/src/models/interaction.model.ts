@@ -2,6 +2,7 @@ import mongoose, { Document, Schema } from "mongoose";
 
 interface IInteraction extends Document {
   studentId: mongoose.Types.ObjectId;
+  companyId: mongoose.Types.ObjectId;
   representativeId: mongoose.Types.ObjectId;
   date: Date;
   studentNotes?: string;
@@ -17,6 +18,11 @@ const interactionSchema = new Schema<IInteraction>({
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     ref: "Student",
+  },
+  companyId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: "Company",
   },
   representativeId: {
     type: mongoose.Schema.Types.ObjectId,

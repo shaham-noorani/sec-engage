@@ -3,7 +3,9 @@ import { Company } from "src/models/company.model";
 
 export const getCompanyById = async (req: Request, res: Response) => {
   try {
-    const company = await Company.findById(req.params.id);
+    const company = await Company.findById(req.params.id).populate(
+      "representatives"
+    );
 
     res.status(200).json(company);
   } catch (error) {
