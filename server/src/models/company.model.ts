@@ -16,9 +16,9 @@ interface ICompany extends Document {
     | "Legally authorized to work in the US"
     | "Seeking sponsorship"
   )[];
-  jobPostings: string[];
-  representatives: mongoose.Types.ObjectId[];
-  mainRepresentative: mongoose.Types.ObjectId;
+  jobPostings?: string[];
+  representatives?: mongoose.Types.ObjectId[];
+  mainRepresentative?: mongoose.Types.ObjectId;
   package?: "Basic" | "Silver" | "Gold" | "Diamond" | "Platinum" | "Maroon";
   boothLocation?: string;
   interactions?: mongoose.Types.ObjectId[];
@@ -50,7 +50,6 @@ const companySchema = new Schema<ICompany>({
   mainRepresentative: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Representative",
-    required: true,
   },
   package: {
     type: String,

@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { Company } from "../models/company.model";
+import { Representative } from "../models/representative.model";
 
 export const getCompanyById = async (req: Request, res: Response) => {
   try {
@@ -23,15 +24,37 @@ export const getAllCompanies = async (req: Request, res: Response) => {
   }
 };
 
-export const createCompany = async (req: Request, res: Response) => {
-  const newCompany = new Company(req.body);
+export const createCompanies = async (req: Request, res: Response) => {
+  const data = req.body as { company: any; representative: any }[];
 
-  try {
-    await newCompany.save();
-    res.status(201).json(newCompany);
-  } catch (error) {
-    res.status(409).json({ message: error.message });
-  }
+  let companies = [];
+  data.forEach(async row => {
+    const companyFromBody = {
+      ...row.company,
+    };
+
+    const representativeFromBody = {
+      ...row.representative,
+    };
+
+    const representative = new Representative(representativeFromBody);
+    await representative.save();
+
+    const company = new Company({
+      ...companyFromBody,
+      mainRepresentative: representative._id,
+      representatives: [representative._id],
+    });
+
+    await company.save();
+
+    representative.company = company._id;
+    await representative.save();
+
+    companies.push(company);
+  });
+
+  res.status(201).json(companies);
 };
 
 export const updateCompany = async (req: Request, res: Response) => {

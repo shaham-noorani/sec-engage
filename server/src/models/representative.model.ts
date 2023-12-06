@@ -1,19 +1,18 @@
 import mongoose, { Document, Schema } from "mongoose";
 
 interface IRepresentative extends Document {
-  company: mongoose.Types.ObjectId;
+  company?: mongoose.Types.ObjectId;
   fullname: string;
   email: string;
   position: string;
   phone: string;
   linkedin?: string;
-  interactions: mongoose.Types.ObjectId[] | null;
+  interactions?: mongoose.Types.ObjectId[] | null;
 }
 
 const representativeSchema = new Schema<IRepresentative>({
   company: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
     ref: "Company",
   },
   fullname: { type: String, required: true },
