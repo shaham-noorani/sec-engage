@@ -1,6 +1,6 @@
 import { Router } from "express";
 import {
-  createCompany,
+  createCompanies,
   deleteCompany,
   getAllCompanies,
   getCompanyById,
@@ -13,7 +13,7 @@ CompanyRouter.get("/:id", getCompanyById);
 
 CompanyRouter.get("/", getAllCompanies);
 
-CompanyRouter.post("/", createCompany);
+CompanyRouter.post("/many", createCompanies);
 
 CompanyRouter.put("/:id", updateCompany);
 

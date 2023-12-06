@@ -13,7 +13,7 @@ function Navbar() {
         <Text
           fontSize='xl'
           fontWeight='bold'>
-          My App
+          SEC Engage
         </Text>
       </Box>
       <Box>
