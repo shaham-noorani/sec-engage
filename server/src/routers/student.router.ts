@@ -5,7 +5,7 @@ import {
   getAllStudents,
   getStudentById,
   updateStudent,
-} from "src/controllers/student.controller";
+} from "../controllers/student.controller";
 
 const StudentRouter = Router();
 

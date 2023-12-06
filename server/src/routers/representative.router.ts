@@ -5,7 +5,7 @@ import {
   getAllRepresentatives,
   getRepresentativeById,
   updateRepresentative,
-} from "src/controllers/representative.controller";
+} from "../controllers/representative.controller";
 
 const RepresentativeRouter = Router();
 

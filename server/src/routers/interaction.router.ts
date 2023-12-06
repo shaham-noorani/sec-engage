@@ -9,7 +9,7 @@ import {
   getInteractionsForRepresentative,
   getInteractionsForStudent,
   updateInteraction,
-} from "src/controllers/interaction.controller";
+} from "../controllers/interaction.controller";
 
 const InteractionRouter = Router();
 

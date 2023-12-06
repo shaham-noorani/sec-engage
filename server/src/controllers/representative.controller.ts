@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Representative } from "src/models/representative.model";
+import { Representative } from "../models/representative.model";
 
 export const getRepresentativeById = async (req: Request, res: Response) => {
   try {

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Interaction } from "src/models/interaction.model";
+import { Interaction } from "../models/interaction.model";
 
 export const getInteractionById = async (req: Request, res: Response) => {
   try {

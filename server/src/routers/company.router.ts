@@ -5,7 +5,7 @@ import {
   getAllCompanies,
   getCompanyById,
   updateCompany,
-} from "src/controllers/company.controller";
+} from "../controllers/company.controller";
 
 const CompanyRouter = Router();
 
