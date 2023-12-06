@@ -5,6 +5,7 @@ import { Industries } from "./industries.model";
 
 interface IStudent extends Document {
   fullname: string;
+  email: string;
   UIN: string;
   major: Major;
   resume: string;
@@ -22,6 +23,7 @@ interface IStudent extends Document {
 
 const studentSchema = new Schema<IStudent>({
   fullname: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
   UIN: { type: String, required: true, unique: true },
   major: { type: String, enum: Object.values(Major), required: true },
   resume: { type: String, required: true },
@@ -50,4 +52,4 @@ const studentSchema = new Schema<IStudent>({
 
 const Student = mongoose.model<IStudent>("Student", studentSchema);
 
-export { Student };
+export { Student, IStudent };

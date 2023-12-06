@@ -6,12 +6,13 @@ import {
   getStudentById,
   updateStudent,
 } from "../controllers/student.controller";
+import { studentAuthMiddleware } from "../auth/auth";
 
 const StudentRouter = Router();
 
 StudentRouter.get("/:id", getStudentById);
 
-StudentRouter.get("/", getAllStudents);
+StudentRouter.get("/", studentAuthMiddleware, getAllStudents);
 
 StudentRouter.post("/", createStudent);
 

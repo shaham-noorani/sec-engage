@@ -28,4 +28,4 @@ const Representative = mongoose.model<IRepresentative>(
   representativeSchema
 );
 
-export { Representative };
+export { Representative, IRepresentative };

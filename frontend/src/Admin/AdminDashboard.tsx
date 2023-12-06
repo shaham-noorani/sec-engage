@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios"
-import { Box, List, Link, Badge, VStack, Text } from "@chakra-ui/react"
+import axios from "axios";
+import { Box, List, Link, Badge, VStack, Text } from "@chakra-ui/react";
+import LoginButton from "../components/LoginButton";
 
 enum Industries {
   "Aerospace",
@@ -63,35 +64,90 @@ interface Student {
 }
 
 const AdminDashboard: React.FC = () => {
-  const [students, setStudents] = useState<Student[]>()
+  const [students, setStudents] = useState<Student[]>();
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    axios.get("http://localhost:3001/api/student").then(res => setStudents(res.data))
-  }, [])
+    axios
+      .get("http://localhost:3001/api/student", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("google_id_token")}`,
+        },
+      })
+      .then(res => {
+        setStudents(res.data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError(true);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <LoginButton />;
+  }
+
   return (
-    <Box borderWidth="1px" borderRadius="lg" overflow="hidden" p={4}>
+    <Box
+      borderWidth='1px'
+      borderRadius='lg'
+      overflow='hidden'
+      p={4}>
       <List spacing={3}>
-        {students && students.map((student) => (
-          <Box p={5} shadow='md' borderWidth='1px'>
-            <VStack align='stretch'>
-              <Text fontSize='xl'>{student.fullname}</Text>
-              <Text>UIN: {student.UIN}</Text>
-              <Text>Major: {student.major}</Text>
-              <Link href={student.resume} isExternal>Resume</Link>
-              {student.GPA && <Text>GPA: {student.GPA}</Text>}
-              {student.linkedin && <Link href={student.linkedin} isExternal>LinkedIn</Link>}
-              {student.gender && <Badge>{student.gender}</Badge>}
-              {student.ethnicity && <Badge>{student.ethnicity}</Badge>}
-              <Text>Graduating: {student.graduationSemester} {student.graduationYear}</Text>
-              {student.positionTypeSeeking.map((type, index) => (
-                <Badge key={index} colorScheme='green'>{type}</Badge>
-              ))}
-              {student.industriesSeeking.map((industry, index) => (
-                <Badge key={index} colorScheme='blue'>{industry}</Badge>
-              ))}
-            </VStack>
-          </Box>
-        ))}
+        {students &&
+          students.map(student => (
+            <Box
+              p={5}
+              shadow='md'
+              borderWidth='1px'
+              key={student.UIN}>
+              <VStack align='stretch'>
+                <Text fontSize='xl'>{student.fullname}</Text>
+                <Text>UIN: {student.UIN}</Text>
+                <Text>Major: {student.major}</Text>
+                <Link
+                  href={student.resume}
+                  isExternal>
+                  Resume
+                </Link>
+                {student.GPA && <Text>GPA: {student.GPA}</Text>}
+                {student.linkedin && (
+                  <Link
+                    href={student.linkedin}
+                    isExternal>
+                    LinkedIn
+                  </Link>
+                )}
+                {student.gender && <Badge>{student.gender}</Badge>}
+                {student.ethnicity && <Badge>{student.ethnicity}</Badge>}
+                <Text>
+                  Graduating: {student.graduationSemester}{" "}
+                  {student.graduationYear}
+                </Text>
+                {student.positionTypeSeeking.map((type, index) => (
+                  <Badge
+                    key={index}
+                    colorScheme='green'>
+                    {type}
+                  </Badge>
+                ))}
+                {student.industriesSeeking.map((industry, index) => (
+                  <Badge
+                    key={index}
+                    colorScheme='blue'>
+                    {industry}
+                  </Badge>
+                ))}
+              </VStack>
+            </Box>
+          ))}
       </List>
     </Box>
   );
