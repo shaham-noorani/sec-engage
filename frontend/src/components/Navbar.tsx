@@ -7,8 +7,6 @@ function Navbar() {
   const { user }: any = useUser();
   const navigate = useNavigate();
 
-  console.log("user: ", user);
-
   const showStudentLinks = user.role === "student" || user.role === "admin";
   const showRepresentativeLinks =
     user.role === "representative" || user.role === "admin";

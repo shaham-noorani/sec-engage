@@ -7,7 +7,6 @@ const useMe = () => {
   const url = process.env.PROD ? "" : "http://localhost:3001";
 
   const me = async () => {
-    console.log(localStorage.getItem("idToken"), "idToken");
     const res = await axios.get(url + "/auth/me", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("idToken")}`,
