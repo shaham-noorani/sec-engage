@@ -24,7 +24,7 @@ export const getUserInformationFromToken = async (idToken: string) => {
   };
 };
 
-export async function studentAuthMiddleware(
+export async function anyUserAuthMiddleware(
   request: Request,
   response: Response,
   next: any
@@ -51,6 +51,60 @@ export async function studentAuthMiddleware(
   }
 
   request.query.email = email;
+
+  next();
+}
+
+export async function studentAuthMiddleware(
+  request: Request,
+  response: Response,
+  next: any
+) {
+  const email = request.query.email;
+
+  // check if email exists in Student collection
+  const studentExists = await Student.exists({ email: email });
+  if (!studentExists) {
+    return response.status(401).json({ error: "Must be a student to access" });
+  }
+
+  next();
+}
+
+export async function representativeAuthMiddleware(
+  request: Request,
+  response: Response,
+  next: any
+) {
+  const email = request.query.email;
+
+  // check if email exists in Representative collection
+  const representativeExists = await Representative.exists({ email: email });
+  if (!representativeExists) {
+    const student = await Student.findOne({ email: email });
+
+    if (!student.admin) {
+      return response
+        .status(401)
+        .json({ error: "Must be a representative to access" });
+    }
+  }
+
+  next();
+}
+
+export async function adminAuthMiddleware(
+  request: Request,
+  response: Response,
+  next: any
+) {
+  const email = request.query.email;
+
+  const student = await Student.findOne({ email: email });
+
+  if (!student.admin) {
+    return response.status(401).json({ error: "Must be an admin to access" });
+  }
 
   next();
 }

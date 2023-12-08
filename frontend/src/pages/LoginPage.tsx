@@ -1,7 +1,6 @@
 import { Box, Heading, Spacer, Text } from "@chakra-ui/react";
 
 import LoginButton from "../modules/auth/LoginButton";
-import Navbar from "src/components/Navbar";
 
 const LoginPage = () => {
   return (

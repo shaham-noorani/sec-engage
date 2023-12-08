@@ -10,20 +10,41 @@ import {
   getInteractionsForStudent,
   updateInteraction,
 } from "../controllers/interaction.controller";
+import {
+  adminAuthMiddleware,
+  representativeAuthMiddleware,
+  studentAuthMiddleware,
+} from "../auth/auth";
 
 const InteractionRouter = Router();
 
 InteractionRouter.get("/:id", getInteractionById);
 
-InteractionRouter.get("/", getAllInteractions);
+InteractionRouter.get("/", adminAuthMiddleware, getAllInteractions);
 
-InteractionRouter.get("/student/:id", getInteractionsForStudent);
+InteractionRouter.get(
+  "/student/:id",
+  studentAuthMiddleware,
+  getInteractionsForStudent
+);
 
-InteractionRouter.get("/company/:id", getInteractionsForCompany);
+InteractionRouter.get(
+  "/company/:id",
+  representativeAuthMiddleware,
+  getInteractionsForCompany
+);
 
-InteractionRouter.get("/representative/:id", getInteractionsForRepresentative);
+InteractionRouter.get(
+  "/representative/:id",
+  representativeAuthMiddleware,
+  getInteractionsForRepresentative
+);
 
-InteractionRouter.get("/date-range", getInteractionsForDateRange);
+InteractionRouter.get(
+  "/date-range",
+  adminAuthMiddleware,
+  getInteractionsForDateRange
+);
 
 InteractionRouter.post("/", createInteraction);
 

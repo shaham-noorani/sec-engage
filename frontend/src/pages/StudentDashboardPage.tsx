@@ -1,5 +1,5 @@
 import { Box, Heading, Text } from "@chakra-ui/react";
-import TestComponent from "src/components/TestComponent";
+import TestComponent from "../components/TestComponent";
 
 const StudentDashboardPage: React.FC = () => {
   return (

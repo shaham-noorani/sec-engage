@@ -14,23 +14,15 @@ import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 const TestComponent: React.FC = () => {
   const [students, setStudents] = useState<Student[]>();
-
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
 
   const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
-    axiosPrivate
-      .get("http://localhost:3001/api/student")
-      .then(res => {
-        setStudents(res.data);
-        setLoading(false);
-      })
-      .catch(() => {
-        setError(true);
-        setLoading(false);
-      });
+    axiosPrivate.get("http://localhost:3001/api/student").then(res => {
+      setStudents(res.data);
+      setLoading(false);
+    });
   }, []);
 
   if (loading) {
@@ -43,7 +35,14 @@ const TestComponent: React.FC = () => {
       borderRadius='lg'
       overflow='hidden'
       p={4}>
-      <Heading>TestComponent</Heading>
+      <Heading
+        as='h1'
+        size='lg'
+        mt={2}
+        ml={1}
+        mb={4}>
+        TestComponent
+      </Heading>
       <List spacing={3}>
         {students &&
           students.map(student => (

@@ -6,7 +6,7 @@ dotenv.config();
 
 import router from "./router";
 import connectToDatabase from "./db/db";
-import authRouter from "./auth/auth";
+import authRouter, { anyUserAuthMiddleware } from "./auth/auth";
 
 const app = express();
 const port = 3001;
@@ -16,7 +16,7 @@ app.use(cors());
 
 app.use("/auth", authRouter);
 
-app.use("/api", router);
+app.use("/api", anyUserAuthMiddleware, router);
 
 app.listen(port, async () => {
   await connectToDatabase();
