@@ -4,19 +4,20 @@ import { Major } from "./majors.model";
 import { Industries } from "./industries.model";
 
 interface IStudent extends Document {
-  fullname: string;
   email: string;
-  UIN: string;
-  major: Major;
-  resume: string;
+  fullname?: string;
+  UIN?: string;
+  major?: Major;
+  resume?: string;
   GPA?: number;
   linkedin?: string;
   gender?: "M" | "F" | "O";
   ethnicity?: "White" | "Black" | "Hispanic" | "Asian" | "Other";
-  graduationSemester: "Fall" | "Spring";
-  graduationYear: number;
-  positionTypeSeeking: ("Internship" | "Full-Time" | "Co-Op")[];
-  industriesSeeking: Industries[];
+  graduationSemester?: "Fall" | "Spring";
+  graduationYear?: number;
+  positionTypeSeeking?: ("Internship" | "Full-Time" | "Co-Op")[];
+  workAuth?: "US Citizen" | "Permanent Resident" | "Seeking sponsorship";
+  industriesSeeking?: Industries[];
   interactions?: mongoose.Types.ObjectId[];
   favoritedCompanies?: mongoose.Types.ObjectId[];
 
@@ -26,7 +27,7 @@ interface IStudent extends Document {
 const studentSchema = new Schema<IStudent>({
   fullname: { type: String },
   email: { type: String, unique: true },
-  UIN: { type: String, unique: true },
+  UIN: { type: String },
   major: { type: String, enum: Object.values(Major) },
   resume: { type: String },
   GPA: { type: Number },
@@ -44,6 +45,10 @@ const studentSchema = new Schema<IStudent>({
   positionTypeSeeking: [
     { type: String, enum: ["Internship", "Full-Time", "Co-Op"] },
   ],
+  workAuth: {
+    type: String,
+    enum: ["US Citizen", "Permanent Resident", "Seeking sponsorship"],
+  },
   industriesSeeking: [{ type: String, enum: Object.values(Industries) }],
   interactions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Interaction" }],
   favoritedCompanies: [
