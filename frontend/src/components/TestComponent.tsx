@@ -1,81 +1,28 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { Box, List, Link, Badge, VStack, Text } from "@chakra-ui/react";
-import LoginButton from "../components/LoginButton";
 
-enum Industries {
-  "Aerospace",
-  "Automotive",
-  "Chemical",
-  "Civil Engineering",
-  "Consulting",
-  "Computer and Technology",
-  "Construction",
-  "Electrical",
-  "Energy",
-  "Environmental",
-  "Finance",
-  "Industrial",
-  "Manufacturing",
-  "Mechanical",
-  "Medical Devices",
-  "Mining",
-  "Pharmaceutical",
-  "Software",
-  "Telecommunications",
-  "Other",
-}
+import {
+  Box,
+  List,
+  Link,
+  Badge,
+  VStack,
+  Text,
+  Heading,
+} from "@chakra-ui/react";
+import Student from "../types/students";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
-enum Major {
-  CPSC = "Computer Science",
-  CPEN = "Computer Engineering",
-  MEEN = "Mechanical Engineering",
-  MMET = "Manufacturing and Mechanical Engineering Technology",
-  MXET = "Multidisciplinary Technology",
-  ELEN = "Electrical Engineering",
-  CVEN = "Civil Engineering",
-  CHEN = "Chemical Engineering",
-  AERO = "Aerospace Engineering",
-  BMEN = "Biomedical Engineering",
-  PETE = "Petroleum Engineering",
-  NUEN = "Nuclear Engineering",
-  OCEN = "Ocean Engineering",
-  MSEN = "Materials Science and Engineering",
-  IDIS = "Industrial Distribution",
-  ISEN = "Industrial and Systems Engineering",
-  EVEN = "Environmental Engineering",
-  AREN = "Architectural Engineering",
-  // add the rest later
-}
-
-interface Student {
-  fullname: string;
-  UIN: string;
-  major: Major;
-  resume: string;
-  GPA?: number;
-  linkedin?: string;
-  gender?: "M" | "F" | "O";
-  ethnicity?: "White" | "Black" | "Hispanic" | "Asian" | "Other";
-  graduationSemester: "Fall" | "Spring";
-  graduationYear: number;
-  positionTypeSeeking: ("Internship" | "Full-Time" | "Co-Op")[];
-  industriesSeeking: Industries[];
-}
-
-const AdminDashboard: React.FC = () => {
+const TestComponent: React.FC = () => {
   const [students, setStudents] = useState<Student[]>();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
+  const axiosPrivate = useAxiosPrivate();
+
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/api/student", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("google_id_token")}`,
-        },
-      })
+    axiosPrivate
+      .get("http://localhost:3001/api/student")
       .then(res => {
         setStudents(res.data);
         setLoading(false);
@@ -90,16 +37,13 @@ const AdminDashboard: React.FC = () => {
     return <div>Loading...</div>;
   }
 
-  if (error) {
-    return <LoginButton />;
-  }
-
   return (
     <Box
       borderWidth='1px'
       borderRadius='lg'
       overflow='hidden'
       p={4}>
+      <Heading>TestComponent</Heading>
       <List spacing={3}>
         {students &&
           students.map(student => (
@@ -153,4 +97,4 @@ const AdminDashboard: React.FC = () => {
   );
 };
 
-export default AdminDashboard;
+export default TestComponent;

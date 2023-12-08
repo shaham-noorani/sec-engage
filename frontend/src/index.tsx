@@ -3,6 +3,8 @@ import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import App from "./App";
+import { AuthProvider } from "./modules/auth/AuthProvider";
+import { UserProvider } from "./contexts/UserProvider";
 
 const container = document.getElementById("root");
 if (!container) throw new Error("Failed to find the root element");
@@ -15,9 +17,13 @@ root.render(
   <React.StrictMode>
     <ColorModeScript />
     <GoogleOAuthProvider clientId={clientId}>
-      <ChakraProvider theme={theme}>
-        <App />
-      </ChakraProvider>
+      <AuthProvider>
+        <UserProvider>
+          <ChakraProvider theme={theme}>
+            <App />
+          </ChakraProvider>
+        </UserProvider>
+      </AuthProvider>
     </GoogleOAuthProvider>
   </React.StrictMode>
 );

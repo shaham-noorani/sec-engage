@@ -1,6 +1,8 @@
 import { Request, Response, Router } from "express";
 import { OAuth2Client, UserRefreshClient } from "google-auth-library";
 import { Student } from "../models/student.model";
+import { Representative } from "../models/representative.model";
+import { Major } from "../models/majors.model";
 
 export const oAuth2Client = new OAuth2Client(
   process.env.GOOGLE_CLIENT_ID,
@@ -54,16 +56,17 @@ export async function studentAuthMiddleware(
 }
 
 export const createStudentIfEmailNotFound = async (email: string) => {
-  try {
-    await Student.find({ email });
-  } catch (err) {
-    const student = new Student({
-      email,
+  // see if email exists in Student colletion
+  const studentExists = await Student.exists({ email: email });
+
+  // if email does not exist, create a new student
+  if (!studentExists) {
+    const newStudent = new Student({
+      email: email,
+      admin: false,
     });
 
-    student.save();
-
-    return student;
+    await newStudent.save();
   }
 };
 
@@ -74,11 +77,6 @@ export const refreshCredentials = async (refreshToken: string) => {
     refreshToken
   );
   return await user.refreshAccessToken();
-};
-
-export const refreshAccessToken = async () => {
-  return (await refreshCredentials(process.env.GOOGLE_REFRESH_TOKEN as string))
-    .credentials.access_token;
 };
 
 const authRouter = Router();
@@ -94,9 +92,54 @@ authRouter.post("/google", async (req, res) => {
 });
 
 authRouter.post("/google/refresh", async (req, res) => {
-  const accessToken = await refreshAccessToken();
+  const refreshToken = req.body.refreshToken;
 
-  res.json({ accessToken });
+  try {
+    const { credentials } = await refreshCredentials(refreshToken);
+
+    res.json({
+      id_token: credentials.id_token as string,
+      refresh_token: credentials.refresh_token as string,
+    });
+  } catch (err) {
+    return res.status(401).json({ error: "Invalid refresh token" });
+  }
+});
+
+authRouter.get("/me", async (req, res) => {
+  const idToken = req.headers.authorization.split(" ")[1]; // Bearer <token>
+
+  if (idToken === "undefined") {
+    return res.status(401).json({ error: "No token provided" });
+  }
+
+  const employeeInfo = await getUserInformationFromToken(idToken);
+  const email = employeeInfo.email;
+
+  try {
+    let user = await Student.findOne({ email: email });
+    let role = "student";
+
+    if (user && user.admin == true) {
+      role = "admin";
+    }
+
+    if (!user) {
+      user = await Representative.findOne({ email: email });
+      let role = "representative";
+    }
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    return res.json({
+      ...user,
+      role,
+    });
+  } catch (error) {
+    return res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 export default authRouter;

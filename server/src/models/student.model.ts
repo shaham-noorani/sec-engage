@@ -19,14 +19,16 @@ interface IStudent extends Document {
   industriesSeeking: Industries[];
   interactions?: mongoose.Types.ObjectId[];
   favoritedCompanies?: mongoose.Types.ObjectId[];
+
+  admin: boolean;
 }
 
 const studentSchema = new Schema<IStudent>({
-  fullname: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  UIN: { type: String, required: true, unique: true },
-  major: { type: String, enum: Object.values(Major), required: true },
-  resume: { type: String, required: true },
+  fullname: { type: String },
+  email: { type: String, unique: true },
+  UIN: { type: String, unique: true },
+  major: { type: String, enum: Object.values(Major) },
+  resume: { type: String },
   GPA: { type: Number },
   linkedin: { type: String },
   gender: { type: String, enum: ["M", "F", "O"] },
@@ -37,9 +39,8 @@ const studentSchema = new Schema<IStudent>({
   graduationSemester: {
     type: String,
     enum: ["Fall", "Spring"],
-    required: true,
   },
-  graduationYear: { type: Number, required: true },
+  graduationYear: { type: Number },
   positionTypeSeeking: [
     { type: String, enum: ["Internship", "Full-Time", "Co-Op"] },
   ],
@@ -48,6 +49,7 @@ const studentSchema = new Schema<IStudent>({
   favoritedCompanies: [
     { type: mongoose.Schema.Types.ObjectId, ref: "Company" },
   ],
+  admin: { type: Boolean, default: false },
 });
 
 const Student = mongoose.model<IStudent>("Student", studentSchema);
