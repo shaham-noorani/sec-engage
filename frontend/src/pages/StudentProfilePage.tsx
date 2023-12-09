@@ -255,7 +255,7 @@ export const StudentProfilePage = () => {
             <Link
               href={student.resume}
               color={student.resume ? "blue.500" : "gray.500"}
-              text-decoration={student.resume ? "underline" : "none"}
+              textDecoration={student.resume ? "underline" : "none"}
               isExternal>
               Resume
             </Link>
@@ -263,6 +263,7 @@ export const StudentProfilePage = () => {
               <Link
                 href={student.linkedin}
                 color={student.linkedin ? "blue.500" : "gray.500"}
+                textDecoration={student.linkedin ? "underline" : "none"}
                 isExternal>
                 LinkedIn
               </Link>

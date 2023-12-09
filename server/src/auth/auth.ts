@@ -112,9 +112,10 @@ export async function adminAuthMiddleware(
 export const createStudentIfEmailNotFound = async (email: string) => {
   // see if email exists in Student colletion
   const studentExists = await Student.exists({ email: email });
+  const representativeExists = await Representative.exists({ email: email });
 
   // if email does not exist, create a new student
-  if (!studentExists) {
+  if (!studentExists && !representativeExists) {
     const newStudent = new Student({
       email: email,
       admin: false,
@@ -167,8 +168,8 @@ authRouter.get("/me", async (req, res) => {
     return res.status(401).json({ error: "No token provided" });
   }
 
-  const employeeInfo = await getUserInformationFromToken(idToken);
-  const email = employeeInfo.email;
+  const userInfo = await getUserInformationFromToken(idToken);
+  const email = userInfo.email;
 
   try {
     let user = await Student.findOne({ email: email });
@@ -180,7 +181,7 @@ authRouter.get("/me", async (req, res) => {
 
     if (!user) {
       user = await Representative.findOne({ email: email });
-      let role = "representative";
+      role = "representative";
     }
 
     if (!user) {

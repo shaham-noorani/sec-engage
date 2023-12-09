@@ -12,7 +12,7 @@ const StudentRouter = Router();
 
 StudentRouter.get("/:id", getStudentById);
 
-StudentRouter.get("/", studentAuthMiddleware, getAllStudents);
+StudentRouter.get("/", getAllStudents);
 
 StudentRouter.post("/", createStudent);
 

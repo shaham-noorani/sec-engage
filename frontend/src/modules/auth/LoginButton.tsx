@@ -29,7 +29,6 @@ const LoginButton = () => {
   const { setAuth }: any = useAuth();
 
   const me = useMe();
-  const { user }: any = useUser();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -51,20 +50,20 @@ const LoginButton = () => {
         idToken: idToken,
         refreshToken: refreshToken,
       });
-      await me();
+
+      const user = await me();
       setIsLoading(false);
 
-      const { from } = location.state || {
-        from: {
-          pathname:
-            user.role === "student"
-              ? "/student"
-              : user.role === "representative"
-              ? "/representative/profile"
-              : "/admin/analytics",
-        },
+      const to = {
+        pathname:
+          user.role === "student"
+            ? "/student/profile"
+            : user.role === "representative"
+            ? "/representative/profile"
+            : "/admin/analytics",
       };
-      navigate(from);
+
+      navigate(to, { replace: true });
     },
     flow: "auth-code",
   });

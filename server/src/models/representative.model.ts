@@ -17,8 +17,8 @@ const representativeSchema = new Schema<IRepresentative>({
   },
   fullname: { type: String, required: true },
   email: { type: String, required: true },
-  position: { type: String, required: true },
-  phone: { type: String, required: true },
+  position: { type: String },
+  phone: { type: String },
   linkedin: { type: String },
   interactions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Interaction" }],
 });

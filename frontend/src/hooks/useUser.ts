@@ -8,6 +8,7 @@ const useUser = () => {
       email: string;
       role: "student" | "representative" | "admin" | null;
       fullname: string;
+      company?: string;
     };
     setUser: (user: any) => void;
   };
