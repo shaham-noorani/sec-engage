@@ -1,13 +1,13 @@
 import mongoose, { Document, Schema } from "mongoose";
-import { Industries } from "./industries.model";
-import { Major } from "./majors.model";
+import { Industry } from "./industry.model";
+import { Major } from "./major.model";
 
 interface ICompany extends Document {
   name: string;
   website: string;
   logo: string; // link to S3 bucket entry
   description: string;
-  industries: Industries[];
+  industries: Industry[];
   majorsHiring: Major[];
   positionTypes: ("Internship" | "Full-Time" | "Co-Op")[];
   degreeLevelsHiring: ("Bachelors" | "Masters" | "PhD")[];
@@ -22,6 +22,7 @@ interface ICompany extends Document {
   package?: "Basic" | "Silver" | "Gold" | "Diamond" | "Platinum" | "Maroon";
   boothLocation?: string;
   interactions?: mongoose.Types.ObjectId[];
+  companyCode?: string;
 }
 
 const companySchema = new Schema<ICompany>({
@@ -29,7 +30,7 @@ const companySchema = new Schema<ICompany>({
   website: { type: String },
   logo: { type: String },
   description: { type: String },
-  industries: [{ type: String, enum: Object.values(Industries) }],
+  industries: [{ type: String, enum: Object.values(Industry) }],
   majorsHiring: [{ type: String, enum: Object.values(Major) }],
   positionTypes: [{ type: String, enum: ["Internship", "Full-Time", "Co-Op"] }],
   degreeLevelsHiring: [{ type: String, enum: ["Bachelors", "Masters", "PhD"] }],
@@ -57,6 +58,7 @@ const companySchema = new Schema<ICompany>({
   },
   boothLocation: { type: String },
   interactions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Interaction" }],
+  companyCode: { type: String, unique: true },
 });
 
 const Company = mongoose.model<ICompany>("Company", companySchema);

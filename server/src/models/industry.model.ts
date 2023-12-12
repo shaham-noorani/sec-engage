@@ -1,4 +1,4 @@
-enum Industries {
+enum Industry {
   "Aerospace",
   "Automotive",
   "Chemical",
@@ -21,4 +21,4 @@ enum Industries {
   "Other",
 }
 
-export { Industries };
+export { Industry };
