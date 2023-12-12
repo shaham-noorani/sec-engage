@@ -4,27 +4,32 @@ import { Major } from "./majors.model";
 import { Industries } from "./industries.model";
 
 interface IStudent extends Document {
-  fullname: string;
-  UIN: string;
-  major: Major;
-  resume: string;
+  email: string;
+  fullname?: string;
+  UIN?: string;
+  major?: Major;
+  resume?: string;
   GPA?: number;
   linkedin?: string;
   gender?: "M" | "F" | "O";
   ethnicity?: "White" | "Black" | "Hispanic" | "Asian" | "Other";
-  graduationSemester: "Fall" | "Spring";
-  graduationYear: number;
-  positionTypeSeeking: ("Internship" | "Full-Time" | "Co-Op")[];
-  industriesSeeking: Industries[];
+  graduationSemester?: "Fall" | "Spring";
+  graduationYear?: number;
+  positionTypeSeeking?: ("Internship" | "Full-Time" | "Co-Op")[];
+  workAuth?: "US Citizen" | "Permanent Resident" | "Seeking sponsorship";
+  industriesSeeking?: Industries[];
   interactions?: mongoose.Types.ObjectId[];
   favoritedCompanies?: mongoose.Types.ObjectId[];
+
+  admin: boolean;
 }
 
 const studentSchema = new Schema<IStudent>({
-  fullname: { type: String, required: true },
-  UIN: { type: String, required: true, unique: true },
-  major: { type: String, enum: Object.values(Major), required: true },
-  resume: { type: String, required: true },
+  fullname: { type: String },
+  email: { type: String, unique: true },
+  UIN: { type: String },
+  major: { type: String, enum: Object.values(Major) },
+  resume: { type: String },
   GPA: { type: Number },
   linkedin: { type: String },
   gender: { type: String, enum: ["M", "F", "O"] },
@@ -35,19 +40,23 @@ const studentSchema = new Schema<IStudent>({
   graduationSemester: {
     type: String,
     enum: ["Fall", "Spring"],
-    required: true,
   },
-  graduationYear: { type: Number, required: true },
+  graduationYear: { type: Number },
   positionTypeSeeking: [
     { type: String, enum: ["Internship", "Full-Time", "Co-Op"] },
   ],
+  workAuth: {
+    type: String,
+    enum: ["US Citizen", "Permanent Resident", "Seeking sponsorship"],
+  },
   industriesSeeking: [{ type: String, enum: Object.values(Industries) }],
   interactions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Interaction" }],
   favoritedCompanies: [
     { type: mongoose.Schema.Types.ObjectId, ref: "Company" },
   ],
+  admin: { type: Boolean, default: false },
 });
 
 const Student = mongoose.model<IStudent>("Student", studentSchema);
 
-export { Student };
+export { Student, IStudent };

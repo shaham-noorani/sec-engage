@@ -24,6 +24,32 @@ export const getAllCompanies = async (req: Request, res: Response) => {
   }
 };
 
+export const createCompany = async (req: Request, res: Response) => {
+  const companyFromBody = {
+    ...req.body.company,
+  };
+
+  const representativeFromBody = {
+    ...req.body.representative,
+  };
+
+  const representative = new Representative(representativeFromBody);
+  await representative.save();
+
+  const company = new Company({
+    ...companyFromBody,
+    mainRepresentative: representative._id,
+    representatives: [representative._id],
+  });
+
+  await company.save();
+
+  representative.company = company._id;
+  await representative.save();
+
+  res.status(201).json(company);
+};
+
 export const createCompanies = async (req: Request, res: Response) => {
   const data = req.body as { company: any; representative: any }[];
 

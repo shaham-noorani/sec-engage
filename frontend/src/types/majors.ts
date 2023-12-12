@@ -17,7 +17,6 @@ enum Major {
   ISEN = "Industrial and Systems Engineering",
   EVEN = "Environmental Engineering",
   AREN = "Architectural Engineering",
-  MISC = "Other",
 }
 
-export { Major };
+export default Major;

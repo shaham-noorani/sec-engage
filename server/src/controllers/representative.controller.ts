@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { Representative } from "../models/representative.model";
+import { Company } from "../models/company.model";
 
 export const getRepresentativeById = async (req: Request, res: Response) => {
   try {
@@ -26,6 +27,12 @@ export const createRepresentative = async (req: Request, res: Response) => {
 
   try {
     await newRepresentative.save();
+
+    // add rep to company
+    const company = await Company.findById(newRepresentative.company);
+    company.representatives.push(newRepresentative._id);
+    await company.save();
+
     res.status(201).json(newRepresentative);
   } catch (error) {
     res.status(409).json({ message: error.message });
@@ -36,11 +43,15 @@ export const updateRepresentative = async (req: Request, res: Response) => {
   const { id } = req.params;
   const representative = req.body;
 
-  await Representative.findByIdAndUpdate(id, representative, {
-    new: true,
-  });
+  const updatedRepresentative = await Representative.findByIdAndUpdate(
+    id,
+    representative,
+    {
+      new: true,
+    }
+  );
 
-  res.json({ message: "Representative updated successfully." });
+  res.json(updatedRepresentative);
 };
 
 export const deleteRepresentative = async (req: Request, res: Response) => {

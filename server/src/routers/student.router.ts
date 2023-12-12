@@ -6,6 +6,7 @@ import {
   getStudentById,
   updateStudent,
 } from "../controllers/student.controller";
+import { studentAuthMiddleware } from "../auth/auth";
 
 const StudentRouter = Router();
 

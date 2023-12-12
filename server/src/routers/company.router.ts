@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   createCompanies,
+  createCompany,
   deleteCompany,
   getAllCompanies,
   getCompanyById,
@@ -12,6 +13,8 @@ const CompanyRouter = Router();
 CompanyRouter.get("/:id", getCompanyById);
 
 CompanyRouter.get("/", getAllCompanies);
+
+CompanyRouter.post("/", createCompany);
 
 CompanyRouter.post("/many", createCompanies);
 

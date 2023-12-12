@@ -26,9 +26,9 @@ interface ICompany extends Document {
 
 const companySchema = new Schema<ICompany>({
   name: { type: String, required: true },
-  website: { type: String, required: true },
-  logo: { type: String, required: true },
-  description: { type: String, required: true },
+  website: { type: String },
+  logo: { type: String },
+  description: { type: String },
   industries: [{ type: String, enum: Object.values(Industries) }],
   majorsHiring: [{ type: String, enum: Object.values(Major) }],
   positionTypes: [{ type: String, enum: ["Internship", "Full-Time", "Co-Op"] }],
