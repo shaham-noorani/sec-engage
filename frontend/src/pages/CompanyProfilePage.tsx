@@ -352,7 +352,7 @@ const CompanyProfilePage: React.FC = () => {
             <OrderedList ml={7}>
               {queues.map(queue => (
                 <ListItem key={queue.majors.join(",")}>
-                  <Text fontSize={"1.2rem"}>{queue.majors.join(", ")}</Text>
+                  <Text fontSize={"1rem"}>{queue.majors.join(", ")}</Text>
                 </ListItem>
               ))}
             </OrderedList>
