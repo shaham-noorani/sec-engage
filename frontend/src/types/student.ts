@@ -1,4 +1,4 @@
-import Major from "./majors";
+import Major from "./major";
 import Industry from "./industry";
 
 interface Student {

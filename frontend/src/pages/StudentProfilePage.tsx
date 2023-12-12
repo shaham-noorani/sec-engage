@@ -20,7 +20,7 @@ import {
 import Student from "../types/student";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import useUser from "../hooks/useUser";
-import Major from "../types/majors";
+import Major from "../types/major";
 import Industry from "src/types/industry";
 
 export const StudentProfilePage = () => {
