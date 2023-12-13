@@ -1,12 +1,15 @@
 import { Router } from "express";
-import StudentRouter from "./routers/student.router";
-import CompanyRouter from "./routers/company.router";
-import RepresentativeRouter from "./routers/representative.router";
-import InteractionRouter from "./routers/interaction.router";
+
 import {
   representativeAuthMiddleware,
   studentAuthMiddleware,
 } from "./auth/auth";
+
+import StudentRouter from "./routers/student.router";
+import CompanyRouter from "./routers/company.router";
+import RepresentativeRouter from "./routers/representative.router";
+import InteractionRouter from "./routers/interaction.router";
+import QueueRouter from "./routers/queue.router";
 
 const router = Router();
 
@@ -17,6 +20,7 @@ router.use(
   representativeAuthMiddleware,
   RepresentativeRouter
 );
+router.use("/queue", QueueRouter);
 router.use("/interaction", InteractionRouter);
 
 export default router;

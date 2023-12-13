@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-import { Major } from "./majors.model";
-import { Industries } from "./industries.model";
+import { Major } from "./major.model";
+import { Industry } from "./industry.model";
 
 interface IStudent extends Document {
   email: string;
@@ -17,7 +17,7 @@ interface IStudent extends Document {
   graduationYear?: number;
   positionTypeSeeking?: ("Internship" | "Full-Time" | "Co-Op")[];
   workAuth?: "US Citizen" | "Permanent Resident" | "Seeking sponsorship";
-  industriesSeeking?: Industries[];
+  industriesSeeking?: Industry[];
   interactions?: mongoose.Types.ObjectId[];
   favoritedCompanies?: mongoose.Types.ObjectId[];
 
@@ -49,7 +49,7 @@ const studentSchema = new Schema<IStudent>({
     type: String,
     enum: ["US Citizen", "Permanent Resident", "Seeking sponsorship"],
   },
-  industriesSeeking: [{ type: String, enum: Object.values(Industries) }],
+  industriesSeeking: [{ type: String, enum: Object.values(Industry) }],
   interactions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Interaction" }],
   favoritedCompanies: [
     { type: mongoose.Schema.Types.ObjectId, ref: "Company" },

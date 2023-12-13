@@ -1,5 +1,5 @@
 import Industry from "./industry";
-import Major from "./majors";
+import Major from "./major";
 import Representative from "./representative";
 
 interface Company extends Document {
@@ -22,6 +22,7 @@ interface Company extends Document {
   package?: "Basic" | "Silver" | "Gold" | "Diamond" | "Platinum" | "Maroon";
   boothLocation?: string;
   interactions?: string[] | null;
+  companyCode?: string;
 }
 
 export default Company;

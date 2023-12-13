@@ -6,18 +6,25 @@ import {
   Spinner,
   VStack,
   FormControl,
-  FormLabel,
   Input,
   Button,
   Spacer,
   Flex,
   useToast,
   Image,
+  IconButton,
+  Highlight,
+  Select,
+  OrderedList,
+  ListItem,
 } from "@chakra-ui/react";
+import { AddIcon, CheckIcon, CloseIcon, EditIcon } from "@chakra-ui/icons";
 
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import useUser from "../hooks/useUser";
 import Company from "../types/company";
+import Queue from "../types/queue";
+import Major from "../types/major";
 
 const CompanyProfilePage: React.FC = () => {
   const axiosPrivate = useAxiosPrivate();
@@ -25,21 +32,42 @@ const CompanyProfilePage: React.FC = () => {
   const { user } = useUser();
 
   const [company, setCompany] = useState<Company | null>(null);
-  const [updatedCompany, setUpdatedCompany] = useState<Company | null>(null);
-
-  const [addingRep, setAddingRep] = useState(false);
-
-  const [addRepIsLoading, setAddRepIsLoading] = useState(false);
+  const [queues, setQueues] = useState<Queue[]>([]);
 
   const [newRepEmail, setNewRepEmail] = useState("");
   const [newRepName, setNewRepName] = useState("");
+
+  const [addingRep, setAddingRep] = useState(false);
+  const [addRepIsLoading, setAddRepIsLoading] = useState(false);
+
+  const [newCompanyCode, setNewCompanyCode] = useState("");
+
+  const [updatingCompanyCode, setUpdatingCompanyCode] = useState(false);
+  const [updateCompanyCodeIsLoading, setUpdateCompanyCodeIsLoading] =
+    useState(false);
+
+  const [newQueueMajors, setNewQueueMajors] = useState<(Major | "")[]>([
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+  ]);
+
+  const [addingNewQueue, setAddingNewQueue] = useState(false);
+  const [addNewQueueIsLoading, setAddNewQueueIsLoading] = useState(false);
 
   const toast = useToast();
 
   useEffect(() => {
     axiosPrivate.get("/company/" + user.company).then(res => {
       setCompany(res.data);
-      setUpdatedCompany(res.data);
+      setNewCompanyCode(res.data.companyCode);
+
+      axiosPrivate.get("/queue/company/" + user.company).then(res => {
+        setQueues(res.data);
+      });
     });
   }, []);
 
@@ -62,6 +90,47 @@ const CompanyProfilePage: React.FC = () => {
       });
   };
 
+  const updateCompanyCode = (code: string) => {
+    setUpdateCompanyCodeIsLoading(true);
+
+    axiosPrivate
+      .put("/company/" + user.company, {
+        ...company,
+        companyCode: code,
+      })
+      .then(res => {
+        setCompany(prev => ({
+          ...prev,
+          companyCode: res.data.companyCode,
+        }));
+        setUpdateCompanyCodeIsLoading(false);
+        setUpdatingCompanyCode(false);
+      });
+  };
+
+  const addNewQueue = (majors: string[]) => {
+    setAddNewQueueIsLoading(true);
+
+    axiosPrivate
+      .post("/queue/company/" + user.company, {
+        companyName: company.name,
+        majors: majors.filter(major => major !== ""),
+      })
+      .then(res => {
+        setQueues(prev => [
+          ...prev,
+          {
+            companyId: user.company,
+            companyName: company.name,
+            majors: majors as Major[],
+            studentsInLine: [],
+          },
+        ]);
+        setAddNewQueueIsLoading(false);
+        setAddingNewQueue(false);
+      });
+  };
+
   const handleAddRep = () => {
     addRepresentative(newRepEmail, newRepName);
 
@@ -75,6 +144,36 @@ const CompanyProfilePage: React.FC = () => {
 
     setNewRepEmail("");
     setNewRepName("");
+  };
+
+  const handleUpdateCompanyCode = () => {
+    updateCompanyCode(newCompanyCode);
+
+    toast({
+      title: "Company Code Updated.",
+      description: `Your company code has been updated to ${newCompanyCode}.`,
+      status: "success",
+      duration: 5000,
+      isClosable: true,
+    });
+
+    setNewCompanyCode("");
+  };
+
+  const handleAddNewQueue = () => {
+    addNewQueue(newQueueMajors);
+
+    toast({
+      title: "Queue Added.",
+      description: `A new queue has been added for ${newQueueMajors
+        .filter(major => major !== "")
+        .join(", ")}.`,
+      status: "success",
+      duration: 5000,
+      isClosable: true,
+    });
+
+    setNewQueueMajors([]);
   };
 
   if (!company) {
@@ -105,7 +204,19 @@ const CompanyProfilePage: React.FC = () => {
 
           <Spacer />
 
-          <Text>Representatives:</Text>
+          <Flex align={"center"}>
+            <Text fontSize={"1.4rem"}>Representatives:</Text>
+            {!addingRep && (
+              <IconButton
+                ml={2}
+                color={"blue"}
+                size={"sm"}
+                aria-label='Add Representative'
+                icon={<AddIcon />}
+                onClick={() => setAddingRep(true)}
+              />
+            )}
+          </Flex>
           {company.representatives.map(rep => (
             <Text key={rep.email}>
               {rep.fullname} - {rep.email}
@@ -114,46 +225,184 @@ const CompanyProfilePage: React.FC = () => {
 
           {addingRep && (
             <FormControl>
-              <FormLabel htmlFor='email'>Email</FormLabel>
-              <Input
-                id='email'
-                type='email'
-                value={newRepEmail}
-                onChange={e => setNewRepEmail(e.target.value)}
-              />
-              <FormLabel htmlFor='fullname'>Full Name</FormLabel>
-              <Input
-                id='fullname'
-                type='text'
-                value={newRepName}
-                onChange={e => setNewRepName(e.target.value)}
-              />
-              <Button
-                mt={4}
-                colorScheme='blue'
-                onClick={handleAddRep}
-                isLoading={addRepIsLoading}>
-                Add Representative
-              </Button>
-
-              <Button
-                mt={4}
-                ml={2}
-                colorScheme='red'
-                onClick={() => setAddingRep(false)}>
-                Cancel
-              </Button>
+              <Flex
+                alignItems='center'
+                gap={3}>
+                <Input
+                  id='newRepEmail'
+                  type='text'
+                  w={"10%"}
+                  value={newRepEmail}
+                  onChange={e => setNewRepEmail(e.target.value)}
+                />
+                <Input
+                  id='newRepName'
+                  type='text'
+                  w={"10%"}
+                  value={newRepName}
+                  onChange={e => setNewRepName(e.target.value)}
+                />
+                <IconButton
+                  aria-label='Add Representative'
+                  color={"green"}
+                  icon={<CheckIcon />}
+                  isLoading={addRepIsLoading}
+                  onClick={() => handleAddRep()}
+                />
+                <IconButton
+                  aria-label='Cancel'
+                  color={"red"}
+                  icon={<CloseIcon />}
+                  onClick={() => setAddingRep(false)}
+                />
+              </Flex>
             </FormControl>
           )}
-          {!addingRep && (
-            <Button
-              mt={4}
-              onClick={() => setAddingRep(true)}>
-              Add New Representative
-            </Button>
+
+          <Spacer
+            mt={2}
+            mb={2}
+          />
+
+          {!updatingCompanyCode && (
+            <Flex align={"center"}>
+              <Text fontSize={"1.4rem"}>
+                Company Code:{" "}
+                <Highlight
+                  query={company.companyCode}
+                  styles={{
+                    py: "1",
+                    px: "2",
+                    rounded: "full",
+                    bg: "blue.100",
+                  }}>
+                  {company.companyCode}
+                </Highlight>
+              </Text>
+              {company.companyCode === "" ? (
+                <Button
+                  ml={2}
+                  colorScheme='red'
+                  onClick={() => setUpdatingCompanyCode(true)}>
+                  Set Company Code
+                </Button>
+              ) : (
+                <IconButton
+                  ml={2}
+                  color={"blue"}
+                  size={"sm"}
+                  aria-label='Set Company Code'
+                  icon={<EditIcon />}
+                  onClick={() => setUpdatingCompanyCode(true)}
+                />
+              )}
+            </Flex>
           )}
+
+          {updatingCompanyCode && (
+            <FormControl>
+              <Flex
+                alignItems='center'
+                gap={3}>
+                <Text fontSize={"1.4rem"}>Company Code: </Text>
+                <Input
+                  id='companyCode'
+                  type='text'
+                  w={"10%"}
+                  value={newCompanyCode}
+                  onChange={e => setNewCompanyCode(e.target.value)}
+                />
+                <IconButton
+                  aria-label='Update Company Code'
+                  color={"green"}
+                  icon={<CheckIcon />}
+                  isLoading={updateCompanyCodeIsLoading}
+                  onClick={() => handleUpdateCompanyCode()}
+                />
+                <IconButton
+                  aria-label='Cancel'
+                  color={"red"}
+                  icon={<CloseIcon />}
+                  onClick={() => setUpdatingCompanyCode(false)}
+                />
+              </Flex>
+            </FormControl>
+          )}
+
+          <Spacer
+            mt={2}
+            mb={2}
+          />
+
+          <Flex align={"center"}>
+            <Text fontSize={"1.4rem"}>Queues:</Text>
+            {!addingNewQueue && (
+              <IconButton
+                ml={2}
+                color={"blue"}
+                size={"sm"}
+                aria-label='Add Queue'
+                icon={<AddIcon />}
+                onClick={() => setAddingNewQueue(true)}
+              />
+            )}
+          </Flex>
+
+          {queues && (
+            <OrderedList ml={7}>
+              {queues.map(queue => (
+                <ListItem key={queue.majors.join(",")}>
+                  <Text fontSize={"1rem"}>{queue.majors.join(", ")}</Text>
+                </ListItem>
+              ))}
+            </OrderedList>
+          )}
+
+          {addingNewQueue && (
+            <FormControl>
+              <Flex
+                alignItems='center'
+                gap={3}>
+                {Array.from({ length: 6 }).map((_, idx) => (
+                  <Select
+                    key={idx}
+                    placeholder={"-"}
+                    onChange={e => {
+                      setNewQueueMajors(prev => {
+                        const newQueueMajors = [...prev];
+                        newQueueMajors[idx] = e.target.value as Major | "";
+                        console.log(newQueueMajors);
+                        return newQueueMajors;
+                      });
+                    }}>
+                    {Object.values(Major).map((value, idx) => (
+                      <option
+                        key={idx}
+                        value={value}>
+                        {value}
+                      </option>
+                    ))}
+                  </Select>
+                ))}
+                <IconButton
+                  aria-label='Add Queue'
+                  color={"green"}
+                  icon={<CheckIcon />}
+                  isLoading={addNewQueueIsLoading}
+                  onClick={() => handleAddNewQueue()}
+                />
+                <IconButton
+                  aria-label='Cancel'
+                  color={"red"}
+                  icon={<CloseIcon />}
+                  onClick={() => setAddingNewQueue(false)}
+                />
+              </Flex>
+            </FormControl>
+          )}
+
+          <Spacer />
         </VStack>
-        <Spacer />
       </Box>
     </Box>
   );
